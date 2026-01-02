@@ -1,80 +1,69 @@
 
+/* node.h */
+
 #ifndef HTMLC_NODE_H
 #define HTMLC_NODE_H
 
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include "ecode.h"
+#include "bool.h"
+#include "nodevec.h"
 
-/*
- * Type of node,
- * - wrapped (element with children),
- * - single (void) or
- * - puretext
- */
-typedef enum {
+typedef enum _nodetype {
+	NODE_TYPE_ELEMENT = 0, /* ex. html */
+	NODE_TYPE_VOID = 1, /* ex. img */
+	NODE_TYPE_TEXT = 2 /* ex. "This is some text" */
+} nodetype;
 
-	NODE_ELEMENT, /* div, html, body, h1, b, p */
-	NODE_VOID, /* br, hr */
-	NODE_TEXT /* puretext */
-
-} nodeType;
-
-/*
- * One HTML node.
- */
 typedef struct _node {
 
-	nodeType type;
+	/* Node type */
+	nodetype nt;
 
-	char *name; /* tag name or NULL for text */
-	char *params; /* raw attribute string or NULL */
-	char *text; /* only for text nodes */
+	/*
+	 * For NODE_TYPE_ELEMENT and NODE_TYPE_VOID
+	 * ex. html, body, h1, img, div, etc.
+	 */
+	char* name;
 
-	struct _node *child;
-	struct _node *next;
+	/*
+	 * For NODE_TYPE_ELEMENT and NODE_TYPE_VOID
+	 * ex. "width = 50%"
+	 */
+	char* attrs;
+
+	/*
+	 * For NODE_TYPE_ELEMENT
+	 * Children node vector
+	 */
+	nodevec children;
+
+	/*
+	 * For NODE_TYPE_TEXT
+	 */
+	char* text;
+
+	/*
+	 * For all nodes
+	 * Some items might be made by the programmer and not allocated
+	 */
+	bool allocated;
 
 } node;
 
 /*
- * Allocates memory and returns the pointer.
- * Returns if NULL if calloc failed.
+ * Allocates memory for a new node and returns it.
+ * Returns NULL if allocation failed.
  */
-node* newNode(nodeType type);
+node* newNode(nodetype nt);
 
 /*
- * Append the child to the parent.
- *
- * If no child is named in the parent, make this child the child in the parent.
- * Otherwise, append it to the last next as next.
+ * Adds a child to the parent of type NODE_TYPE_ELEMENT.
+ * Returns ECODE_SUCCESS or ECODE_FAIL_BADARG if:
+ * 1. parent == NULL
+ * 2. child == NULL
+ * 3. parent.nt != NODE_TYPE_ELEMENT
  */
-void appendChild(node* parent, node* child);
-
-/*
- * Recursively free the linked list.
- */
-void freeNode(node *n);
-
-/*
- * Recursively print the linked list.
- */
-void printNode(node *n);
-
-/*
- * Create a wrapping HTML tag node.
- */
-node* wrapped(char *name, char *params, ...);
-
-/*
- * Create a single (non-wrapping) HTML tag node.
- */
-node* single(char *name, char *params);
-
-/*
- * Create a puretext node.
- */
-node* puretext(char *text);
+ecode addChild(node* parent, node* child);
 
 #endif
 

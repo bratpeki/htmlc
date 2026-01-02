@@ -4,14 +4,14 @@ C=$(shell find . -iname "*.c")
 OUT=htmlc.out
 
 build:
-	@$(CC) -o $(OUT) $(C) $(LNK)
+	$(CC) -o $(OUT) $(C) $(LNK)
 
 dbuild:
-	@$(CC) -o $(OUT) $(C) $(LNK) -g
+	$(CC) -o $(OUT) $(C) $(LNK) -g
 
 clean:
-	@if [ -f $(OUT) ]; then rm $(OUT); fi
+	if [ -f $(OUT) ]; then rm $(OUT); fi
 
 exec:
-	@./$(OUT)
+	./$(OUT)
 

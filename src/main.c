@@ -1,32 +1,59 @@
 
+/* main.c */
+
+#include "include/bool.h"
 #include "include/node.h"
+#include "include/tag.h"
+#include "include/tree.h"
 
 #include <stdlib.h>
+#include <stdio.h>
+
+#define STATIC_VD( dest, nname, aattrs ) \
+	(dest).nt = NODE_TYPE_VOID; \
+	(dest).name = nname; \
+	(dest).attrs = aattrs; \
+	(dest).allocated = FALSE;
 
 int main(void) {
 
-	node *head =
-		wrapped("html", "",
-			wrapped("body", "",
-				wrapped("h1", "color=\"red\"",
-					puretext("Hi! "),
-					wrapped("i", "",
-						puretext("Here's some italic text!"),
+	/* Main node */
+	node* head;
+
+	/* Reusable elements */
+	node reusable1;
+	node reusable2;
+
+	STATIC_VD(reusable1, "hr", "width=\"25%\"");
+	STATIC_VD(reusable2, "hr", "width=\"100%\"");
+
+	head =
+		el("html", NULL,
+			el("body", NULL,
+				el("h1", "color=\"red\"",
+					tx("Hi! "),
+					el("i", NULL,
+						tx("Here's some italic text!"),
 						NULL
 					),
 					NULL
 				),
-				single("hr", "width=\"50%\""),
-				puretext("Some text"),
+				&reusable1,
+				vd("hr", "width=\"50%\""),
+				&reusable1,
+				&reusable2,
+				&reusable1,
+				tx("Some text"),
 				NULL
 			),
 			NULL
 		);
 
-	printNode(head);
+	printTree(head, 0);
 	putchar('\n');
-	freeNode(head);
+	freeTree(head);
 
 	return EXIT_SUCCESS;
 
 }
+

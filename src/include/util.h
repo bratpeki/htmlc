@@ -1,15 +1,14 @@
 
+/* util.h */
+
 #ifndef HTMLC_UTIL_H
 #define HTMLC_UTIL_H
 
 /*
- * Allocates memory for an identical copy of s.
- * Copies info over.
- *
- * Returns the pointer to the copied info,
- * or NULL if copying couldn't happen or if s is NULL.
+ * Duplicate the string and return the duplicated one.
+ * Return NULL is allocation failed.
  */
-char* strdup(char* s);
+char* strdupe(char* original);
 
 #endif
 

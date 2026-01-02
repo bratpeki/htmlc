@@ -1,21 +1,35 @@
 
+/* util.c */
+
 #include "include/util.h"
 
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
-char *strdup(char *s) {
+char* strdupe(char* original) {
 
-	char* p;
+	char* ret;
+	int len;
 
-	if ( s == NULL ) return NULL;
+	if ( original == NULL ) return NULL;
 
-	p = malloc(strlen(s) + 1);
-	if ( p == NULL ) return NULL;
+	len = strlen(original) + 1;
 
-	strcpy(p, s);
+	ret = (char*)malloc(len);
 
-	return p;
+	/*
+	 * ret == NULL implies truth if ret is zero.
+	 * Zero is false, according to the Port70 draft.
+	 * Therefore, not zero is true.
+	 * So, finally, true is the same as not ret.
+	 *
+	 * ret == NULL is the same as !ret
+	 */
+	if (!ret) return NULL;
+
+	memcpy(ret, original, len);
+
+	return ret;
 
 }
 
